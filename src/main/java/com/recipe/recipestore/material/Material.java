@@ -1,13 +1,13 @@
 package com.recipe.recipestore.material;
 
-import com.recipe.recipestore.recipe.Recipe;
+import com.recipe.recipestore.ingredient.Ingredient;
+import com.recipe.recipestore.shared.utils.UnitTypeEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table
@@ -19,21 +19,20 @@ public class Material {
     @Id
     @SequenceGenerator(name = "material_seq", sequenceName = "material_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "material_seq")
-    private Long matId;
+    private Long id;
+
     @Column(unique = true, nullable = false)
-    private String matName;
+    private String name;
+
     private Integer weight;
-    private String unit;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UnitTypeEnum unit;
+
     private Integer price;
 
-//    @ManyToMany(mappedBy = "material")
-//    public Set<Recipe> recName;
-
-    @ManyToMany
-    @JoinTable (
-            name= "recipe_like",
-            joinColumns = @JoinColumn(name = "mat_id", referencedColumnName = "matId"),
-            inverseJoinColumns = @JoinColumn (name = "rec_id", referencedColumnName = "recId"))
-    public Set<Recipe> recipe;
-
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    private List<Ingredient> ingredients;
 }

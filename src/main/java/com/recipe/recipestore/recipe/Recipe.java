@@ -1,13 +1,12 @@
 package com.recipe.recipestore.recipe;
 
-import com.recipe.recipestore.material.Material;
+import com.recipe.recipestore.ingredient.Ingredient;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Set;
+import java.util.List;
 
 
 @Entity
@@ -20,20 +19,19 @@ public class Recipe {
     @Id
     @SequenceGenerator(name = "recipe_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "recipe_seq")
-    private Long recId;
+    private Long id;
+
     @Column(unique = true, nullable = false)
-    private String recName;
+    private String name;
+
     private String description;
+
     private String image;
 
-    @ManyToMany(mappedBy = "recipe")
-    public Set<Material> material;
+    @OneToMany(fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL)
+    private List<Ingredient> ingredients;
 
-//    @ManyToMany
-//    @JoinTable(
-//            name = "material_like",
-//            joinColumns = @JoinColumn( name = "rec_id", referencedColumnName = "recId"),
-//            inverseJoinColumns = @JoinColumn (name = "mat_id", referencedColumnName = "matId"))
-//    public Set<Material> material;
+
 
 }
