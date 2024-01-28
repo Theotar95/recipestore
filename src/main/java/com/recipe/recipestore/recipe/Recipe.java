@@ -30,6 +30,7 @@ public class Recipe {
 
     @OneToMany(fetch = FetchType.LAZY,
         cascade = CascadeType.ALL)
+    @Column(unique = true)
     private List<Ingredient> ingredients;
 
 

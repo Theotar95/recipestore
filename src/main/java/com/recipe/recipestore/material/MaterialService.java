@@ -1,7 +1,8 @@
 package com.recipe.recipestore.material;
 
+import com.recipe.recipestore.shared.exception.BadRequestException;
+import com.recipe.recipestore.shared.exception.NotFoundException;
 import jakarta.transaction.Transactional;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,11 +36,11 @@ public class MaterialService {
         return (materialRequestDTOS);
     }
 
-    public ResponseEntity<MaterialCreateDTO> addNewMaterial (MaterialCreateDTO materialCreateDTO){
+    public ResponseEntity<MaterialCreateDTO> addNewMaterial (MaterialCreateDTO materialCreateDTO) throws BadRequestException {
         Optional<Material> nameAvailable = Optional.ofNullable(materialRepository.findMaterialByName(materialCreateDTO.getName()));
 
         if (nameAvailable.isPresent()){
-            throw new IllegalStateException("This name is exist!");
+            throw new BadRequestException("This material is exist, name must be unique!");
         }
 
         Material newMaterial = new Material();
@@ -62,11 +63,11 @@ public class MaterialService {
     }
 
     @Transactional
-    public  ResponseEntity<MaterialCreateDTO> updateMaterial (Long id, MaterialCreateDTO materialUpdateDto){
+    public  ResponseEntity<MaterialCreateDTO> updateMaterial (Long id, MaterialCreateDTO materialUpdateDto) throws NotFoundException {
         Optional<Material> material = this.materialRepository.findById(id);
 
         if (material.isEmpty()){
-            throw new IllegalStateException("This item doesn't exist");
+            throw new NotFoundException("Material doesn't exist!");
         }
 
         MaterialCreateDTO materialRequest = new MaterialCreateDTO();
@@ -84,9 +85,9 @@ public class MaterialService {
 
     }
 
-    public ResponseEntity<HttpStatus> patchMaterial(Long id, MaterialRequestDTO materialRequestDTO) throws BadRequestException {
+    public ResponseEntity<HttpStatus> patchMaterial(Long id, MaterialRequestDTO materialRequestDTO) throws NotFoundException {
         Material existingMaterial = this.materialRepository.findById(id)
-                .orElseThrow( () -> new BadRequestException("This material doesn't exist"));
+                .orElseThrow( () -> new NotFoundException("Material doesn't exist"));
 
         if(materialRequestDTO.getName() != null){
             existingMaterial.setName(materialRequestDTO.getName());

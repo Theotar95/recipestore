@@ -1,6 +1,7 @@
 package com.recipe.recipestore.material;
 
-import org.apache.coyote.BadRequestException;
+import com.recipe.recipestore.shared.exception.BadRequestException;
+import com.recipe.recipestore.shared.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ public class MaterialController {
     }
 
     @PostMapping(path = "upload")
-    public ResponseEntity<MaterialCreateDTO> createMaterial (@RequestBody MaterialCreateDTO materialCreateDTO){
+    public ResponseEntity<MaterialCreateDTO> createMaterial (@RequestBody MaterialCreateDTO materialCreateDTO) throws BadRequestException {
         MaterialCreateDTO materialCreate = this.materialService.addNewMaterial(materialCreateDTO).getBody();
         return new ResponseEntity<>(materialCreate, HttpStatus.CREATED);
     }
@@ -35,13 +36,13 @@ public class MaterialController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<MaterialCreateDTO> updateMaterial(@PathVariable("id") Long id, @RequestBody MaterialCreateDTO materialUpdateDTO){
+    public ResponseEntity<MaterialCreateDTO> updateMaterial(@PathVariable("id") Long id, @RequestBody MaterialCreateDTO materialUpdateDTO) throws NotFoundException {
         MaterialCreateDTO materialCreate = this.materialService.updateMaterial(id, materialUpdateDTO).getBody();
         return new ResponseEntity<>(materialCreate, HttpStatus.OK);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<HttpStatus> patchMaterial(@PathVariable("id") Long id, @RequestBody MaterialRequestDTO materialRequestDTO) throws BadRequestException {
+    @PatchMapping("{id}")
+    public ResponseEntity<HttpStatus> patchMaterial(@PathVariable("id") Long id, @RequestBody MaterialRequestDTO materialRequestDTO) throws NotFoundException {
         this.materialService.patchMaterial(id, materialRequestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
